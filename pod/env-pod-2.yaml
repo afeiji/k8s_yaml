@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: env-pod2
+  namespace: kube-system
+spec:
+  containers:
+  - name: env-pod2
+    image: busybox
+    command: ["/bin/sh", "-c", "env"]

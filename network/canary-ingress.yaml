@@ -1,0 +1,17 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: canary
+  annotations:
+    kubernetes.io/ingress.class: nginx 
+    nginx.ingress.kubernetes.io/canary: "true"  # 要开启灰度发布机制，首先需要启用 Canary
+    nginx.ingress.kubernetes.io/canary-by-cookie: "users_from_Beijing"  # 基于 cookie 
+    nginx.ingress.kubernetes.io/canary-weight: "30"  # 会被忽略，因为配置了 canary-by-headerCanary版本
+spec:
+  rules:
+  - host: echo.qikqiak.com
+    http:
+      paths:
+      - backend:
+          serviceName: canary
+          servicePort: 80

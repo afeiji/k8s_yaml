@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hook-deom2
+  namespace: default
+spec:
+  containers:
+  - name: hook-deom2
+    image: nginx
+    lifecycle:
+      preStop:
+        exec:
+          command: ["/usr/sbin/nginx","-s","quit"] # 优雅退出
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hook-deom3
+  namespace: default
+spec:
+  volumes:
+  - name: message
+    hostPath:
+      path: /tmp
+  containers:
+  - name: message
+    image: nginx
+    ports:
+    - containerPort: 80
+    volumeMounts:
+    - name: message
+      mountPath: /usr/share/
+    lifecycle:
+      preStop:
+        exec:
+          command: ['/bin/sh', '-c', 'echo Hello from the preStop Handler > /usr/share/message']
