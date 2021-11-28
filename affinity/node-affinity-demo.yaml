@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+ name: node-affinity
+ labels:
+   app: node-affinity
+spec:
+  replicas: 8
+  selector:
+    matchLabels:
+      app: node-affinity
+  template:
+    metadata:
+      labels:
+        app: node-affinity
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.7.9
+        ports: 
+        - containerPort: 80
+          name: nginxweb
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: NotIn
+                values:
+                - master1
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 90
+            preference: 
+              matchExpressions:
+              - key: com
+                operator: In
+                values:
+                - youdianzhishi
+

@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus
+  namespace: kube-mon
+spec:
+  selector:
+    matchLabels:
+      app: prometheus
+  template:
+    metadata:
+      labels:
+        app: prometheus
+    spec:
+      nodeSelector:
+        # kubernetes.io/hostname: node2   # 只固定在node2节点
+      containers:
+      - image: prom/prometheus:v2.24.1
+        name: prometheus
+        args:
+        - "--config.file=/etc/prometheus/prometheus.yml"
+        - "--storage.tsdb.path=/prometheus"  # 指定tsdb数据路径
+        - "--storage.tsdb.retention.time=24h"
+        - "--web.enable-admin-api"  # 控制对admin HTTP API的访问，其中包括删除时间序列等功能
+        - "--web.enable-lifecycle"  # 支持热更新，直接执行localhost:9090/-/reload立即生效
+        ports:
+        - containerPort: 9090
+          name: http
+        volumeMounts:
+        - mountPath: "/etc/prometheus"
+          name: config-volume
+        - mountPath: "/prometheus"
+          name: data
+      initContainers:
+      - name: fix-permissions
+        image: busybox
+        command: [chown, -R, "nobody:nobody", /prometheus]
+        volumeMounts:
+        - name: data
+          mountPath: /prometheus
+      volumes:
+      - name: config-volume
+        configMap:
+          name: prometheus-config
+      - name: data
+        hostPath:
+          path: /prometheus
+        
+          
