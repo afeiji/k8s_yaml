@@ -13,7 +13,7 @@ spec:
         app: prometheus
     spec:
       serviceAccountName: prometheus
-      nodeSelector:
+#      nodeSelector:
         # kubernetes.io/hostname: node2   # 只固定在node2节点
       containers:
       - image: prom/prometheus:v2.24.1
