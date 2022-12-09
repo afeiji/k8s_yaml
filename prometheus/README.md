@@ -14,5 +14,6 @@ kubectl apply -f prometheus-rbac.yaml
 
 kubectl apply -f prometheus-deploy.yaml
 
-kubectl get pod -n kube-mon
+kubectl apply -f prometheus-svc.yaml
 
+kubectl get pod -n kube-mon
